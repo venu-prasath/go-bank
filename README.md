@@ -15,6 +15,7 @@ This is an experimental application to explore backend development with the foll
    - Golang
    - VSCode
    - Docker
+   - sqlc
 2. Install and run Postgres database inside Docker
    - Install Postgres
    - Install PgAdmin4
