@@ -33,12 +33,13 @@ All the necessary scripts can be found in the Makefile for quick dev setup.
 
 #### 1. Create migrations
 
-Run the migration command mentioned above to configure the up and down migration files.
+Run the migration command mentioned above to initialize the migration files.
 
 ##### Installation
 
 ```
 curl -s https://packagecloud.io/install/repositories/golang-migrate/migrate/script.deb.sh | sudo bash
+# or
 sudo apt-get install migrate
 
 ```
@@ -61,10 +62,10 @@ migrate -v
 
 #### 2. Setup sqlc
 
-- After installing sqlc, make sure to refer the sqlc's github page to configure sqlc.yaml script. You can refer the sqlc.yaml script in this project for a small database of 3 tables.
-- Make sure to update Makefile to include the `sqlc migrate` command.
-- Create the necessary queries in the db/query directory and run `sqlc generate`
-- Check the generated db files for errors.
+1. After installing sqlc, make sure to refer the sqlc's github page to configure sqlc.yaml script. You can refer the sqlc.yaml script in this project for a small database of 3 tables.
+2. Make sure to update Makefile to include the `sqlc generate` command.
+3. Create the necessary queries in the db/query directory and run `sqlc generate`
+4. Check the generated db files for errors.
 
 #### 3. Create Unit Tests for Database CRUD
 

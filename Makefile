@@ -1,5 +1,9 @@
 postgres:
-	docker run --name pg -p 5432:5432 -e POSTGRES_USER=root -e POSTGRES_PASSWORD=secretPass123 -d postgres:12-alpine 
+	docker run --name pg \
+	-p 5432:5432 \
+	-e POSTGRES_USER=root \
+	-e POSTGRES_PASSWORD=secretPass123 \
+	-d postgres:12-alpine 
 
 pgadmin:
 	docker run -p 80:80 \
