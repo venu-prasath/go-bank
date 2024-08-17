@@ -2,75 +2,60 @@ package db
 
 import (
 	"context"
-	"log"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/require"
 	"github.com/venu-prasath/go-bank/util"
 )
 
-func createRandomEntry(t *testing.T, id int64) Entry {
-	arg := CreateEntryParams {
-		AccountID: id,
-		Amount: util.RandomMoney(),
+func createRandomEntry(t *testing.T, account Account) Entry {
+	arg := CreateEntryParams{
+		AccountID: account.ID,
+		Amount:    util.RandomMoney(),
 	}
+
 	entry, err := testQueries.CreateEntry(context.Background(), arg)
 	require.NoError(t, err)
 	require.NotEmpty(t, entry)
 
 	require.Equal(t, arg.AccountID, entry.AccountID)
 	require.Equal(t, arg.Amount, entry.Amount)
+
 	require.NotZero(t, entry.ID)
 	require.NotZero(t, entry.CreatedAt)
+
 	return entry
 }
 
-func createXEntries() {
-	var i int64
-	for ; i<10; i++ {
-		arg := CreateEntryParams {
-			AccountID: 5,
-			Amount: util.RandomMoney(),
-		}
-		_, err := testQueries.CreateEntry(context.Background(), arg)
-		if err != nil {
-			log.Println("Error occured: ", err)
-		}
-
-	}
-}
-
 func TestCreateEntry(t *testing.T) {
-	createRandomEntry(t, 51)
-}
-
-func TestCreateXEntries(t *testing.T) {
-	createXEntries()
+	account := createRandomAccount(t)
+	createRandomEntry(t, account)
 }
 
 func TestGetEntry(t *testing.T) {
-	//Create Entry
-	entry1 := createRandomEntry(t, 52)
+	account := createRandomAccount(t)
+	entry1 := createRandomEntry(t, account)
 	entry2, err := testQueries.GetEntry(context.Background(), entry1.ID)
-
 	require.NoError(t, err)
 	require.NotEmpty(t, entry2)
 
+	require.Equal(t, entry1.ID, entry2.ID)
 	require.Equal(t, entry1.AccountID, entry2.AccountID)
 	require.Equal(t, entry1.Amount, entry2.Amount)
-	require.NotZero(t, entry2.ID)
-	require.NotZero(t, entry2.CreatedAt)
+	require.WithinDuration(t, entry1.CreatedAt, entry2.CreatedAt, time.Second)
 }
 
-func TestListEntry(t *testing.T) {
-	// for i:=0; i<10; i++ {
-	// 	createRandomEntry(t, 53)
-	// }
+func TestListEntries(t *testing.T) {
+	account := createRandomAccount(t)
+	for i := 0; i < 10; i++ {
+		createRandomEntry(t, account)
+	}
 
-	arg := ListEntriesParams {
-		Limit: 5,
-		Offset: 5,
-		AccountID: 5,
+	arg := ListEntriesParams{
+		AccountID: account.ID,
+		Limit:     5,
+		Offset:    5,
 	}
 
 	entries, err := testQueries.ListEntries(context.Background(), arg)
@@ -79,7 +64,6 @@ func TestListEntry(t *testing.T) {
 
 	for _, entry := range entries {
 		require.NotEmpty(t, entry)
+		require.Equal(t, arg.AccountID, entry.AccountID)
 	}
-
-
 }
